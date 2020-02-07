@@ -1,0 +1,18 @@
+Import('env')
+
+env['CCFLAGS'] += ' -fPIC'
+
+env['CPPPATH'] = [
+    '#include',
+]
+
+env.ParseConfig(env['CONFIG_PARSER'])
+
+if env['ARCH'] == 'darwin':
+    env.StaticLibrary('unixkit',
+                      ['unixkit.c',
+                       'unixkit-darwin.c'])
+else:
+    env.StaticLibrary('unixkit',
+                      ['unixkit.c',
+                       'unixkit-linux.c'])
