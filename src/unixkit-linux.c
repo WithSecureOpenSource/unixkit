@@ -110,3 +110,20 @@ bool unixkit_rename(const char *old, const char *new)
     }
     return false;
 }
+
+bool unixkit_renameat(int old_dirfd,
+                      const char *old,
+                      int new_dirfd,
+                      const char *new)
+{
+    if (!syscall(
+            SYS_renameat2, old_dirfd, old, new_dirfd, new, RENAME_NOREPLACE))
+        return true;
+    if (errno == ENOSYS || errno == EINVAL) {
+        struct stat sb;
+        if (fstatat(new_dirfd, new, &sb, 0) < 0 && errno == ENOENT)
+            return !renameat(old_dirfd, old, new_dirfd, new);
+        errno = EEXIST;
+    }
+    return false;
+}

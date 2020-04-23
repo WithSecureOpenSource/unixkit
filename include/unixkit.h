@@ -59,6 +59,10 @@ int unixkit_unix_listen(const char *path, mode_t mode);
  * EEXIST.
  */
 bool unixkit_rename(const char *old_path, const char *new_path);
+bool unixkit_renameat(int old_dirfd,
+                      const char *old_path,
+                      int new_dirfd,
+                      const char *new_path);
 
 /*
  * Write files atomically. If the application calls clearerr, rewind

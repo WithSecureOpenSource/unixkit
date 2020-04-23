@@ -75,3 +75,19 @@ bool unixkit_rename(const char *old, const char *new)
     }
     return false;
 }
+
+bool unixkit_renameat(int old_dirfd,
+                      const char *old,
+                      int new_dirfd,
+                      const char *new)
+{
+    if (!renameatx_np(old_dirfd, old, new_dirfd, new, RENAME_EXCL))
+        return true;
+    if (errno == ENOTSUP) {
+        struct stat sb;
+        if (fstatat(new_dirfd, new, &sb, 0) < 0 && errno == ENOENT)
+            return !renameat(old_dirfd, old, new_dirfd, new);
+        errno = EEXIST;
+    }
+    return false;
+}
