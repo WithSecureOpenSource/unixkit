@@ -240,8 +240,9 @@ bool unixkit_path_starts_with_any(const char *path, avl_tree_t *paths)
             fsfree(copy);
             return true;
         }
-        while (n > 0 && copy[n - 1] != '/')
-            n--;
+        if (copy[n] != '/')
+            while (n > 0 && copy[n - 1] != '/')
+                n--;
         copy[n] = '\0';
     }
 }
