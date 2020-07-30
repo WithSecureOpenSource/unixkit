@@ -80,6 +80,8 @@ bool unixkit_path_starts_with(const char *path, const char *prefix);
  * comparator.
  */
 bool unixkit_path_starts_with_any(const char *path, avl_tree_t *paths);
+avl_elem_t *unixkit_path_get_lowest_ancestor(const char *path,
+                                             avl_tree_t *paths);
 
 #ifdef __cplusplus
 }
