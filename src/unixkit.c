@@ -223,26 +223,62 @@ bool unixkit_path_starts_with(const char *path, const char *prefix)
     return path_starts_with_(path, prefix, common_prefix_length(path, prefix));
 }
 
-bool unixkit_path_starts_with_any(const char *path, avl_tree_t *paths)
+avl_elem_t *unixkit_path_get_lowest_ancestor(const char *path,
+                                             avl_tree_t *paths)
 {
     /* This somewhat tricky algorithm pays off if there are dozens of
-     * path prefixes to match. */
+     * path prefixes to match. Given a path P and a set S of paths,
+     * the algorithm finds the predecessor P̅ of P in S WRT
+     * lexicographical order. There are three cases:
+     *
+     * 1. P̅ does not exist
+     *
+     * No path in S is an ancestor of P.
+     *
+     * 2a. P̅ = P
+     *
+     * 2b. P = P̅ '/' Y
+     *
+     * 2c. P̅ = X '/'
+     *     P = X '/' Y
+     *
+     * P̅ is the lowest ancestor of P in S.
+     *
+     * 3. P = X c Y
+     *    P̅ = X c̅ Z
+     *    c ≠ c̅
+     *
+     * If c = '/', no ancestor of P longer than X is in S. The
+     * algorithm then recursively finds the lowest ancestor of X in S.
+     *
+     * If c ≠ '/', let X̅ be the longest prefix of X ending with a '/',
+     * or ɛ if X does not contain a '/'. No ancestor of P longer than
+     * X̅ is in S. The algorithm then recursively finds the lowest
+     * ancestor of X̅ in S.
+     */
+
     char *copy = charstr_dupstr(path);
     for (;;) {
         avl_elem_t *element = avl_tree_get_on_or_before(paths, copy);
         if (!element) {
             fsfree(copy);
-            return false;
+            return NULL;
         }
         const char *prefix = avl_elem_get_key(element);
         size_t n = common_prefix_length(prefix, copy);
         if (path_starts_with_(copy, prefix, n)) {
             fsfree(copy);
-            return true;
+            return element;
         }
         if (copy[n] != '/')
             while (n > 0 && copy[n - 1] != '/')
                 n--;
         copy[n] = '\0';
     }
+}
+
+bool unixkit_path_starts_with_any(const char *path, avl_tree_t *paths)
+{
+    avl_elem_t *element = unixkit_path_get_lowest_ancestor(path, paths);
+    return element != NULL;
 }
