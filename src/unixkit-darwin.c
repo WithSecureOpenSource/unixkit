@@ -1,3 +1,5 @@
+#include "unixkit-posix.h"
+
 #include <fsdyn/fsalloc.h>
 
 #include <errno.h>
@@ -90,4 +92,14 @@ bool unixkit_renameat(int old_dirfd,
         errno = EEXIST;
     }
     return false;
+}
+
+bool unixkit_pipe(int pipefd[2])
+{
+    return unixkit_pipe_posix(pipefd);
+}
+
+bool unixkit_socketpair(int domain, int type, int protocol, int pairfd[2])
+{
+    return unixkit_socketpair_posix(domain, type, protocol, pairfd);
 }

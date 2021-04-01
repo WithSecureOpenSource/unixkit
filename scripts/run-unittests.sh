@@ -55,8 +55,10 @@ run-tests () {
     run-test $arch $test_dir/test_get_fd_path &&
     run-test $arch $test_dir/test_get_peer_credentials &&
     run-test $arch $test_dir/test_path &&
+    run-test $arch $test_dir/test_pipe &&
     run-test $arch $test_dir/test_rename stage/$arch/workdir &&
     run-test $arch $test_dir/test_renameat stage/$arch/workdir &&
+    run-test $arch $test_dir/test_socketpair &&
     run-test $arch $test_dir/test_unix_listen stage/$arch/workdir/socket
 }
 
