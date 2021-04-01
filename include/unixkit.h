@@ -6,6 +6,7 @@
 #include <fsdyn/list.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -63,6 +64,11 @@ bool unixkit_renameat(int old_dirfd,
                       const char *old_path,
                       int new_dirfd,
                       const char *new_path);
+
+/* pipe() and socketpair() wrappers that set the close-on-exec flag on
+ * the allocated file descriptors. */
+bool unixkit_pipe(int pipefd[2]);
+bool unixkit_socketpair(int domain, int type, int protocol, int pairfd[2]);
 
 /*
  * Write files atomically. If the application calls clearerr, rewind

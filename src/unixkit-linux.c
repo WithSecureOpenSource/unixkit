@@ -1,5 +1,7 @@
 #define _GNU_SOURCE
 
+#include "unixkit-posix.h"
+
 #include <fsdyn/fsalloc.h>
 
 #include <errno.h>
@@ -125,5 +127,23 @@ bool unixkit_renameat(int old_dirfd,
             return !renameat(old_dirfd, old, new_dirfd, new);
         errno = EEXIST;
     }
+    return false;
+}
+
+bool unixkit_pipe(int pipefd[2])
+{
+    if (!syscall(SYS_pipe2, pipefd, O_CLOEXEC))
+        return true;
+    if (errno == ENOSYS)
+        return unixkit_pipe_posix(pipefd);
+    return false;
+}
+
+bool unixkit_socketpair(int domain, int type, int protocol, int pairfd[2])
+{
+    if (!socketpair(domain, type | SOCK_CLOEXEC, protocol, pairfd))
+        return true;
+    if (errno == EINVAL)
+        return unixkit_socketpair_posix(domain, type, protocol, pairfd);
     return false;
 }
