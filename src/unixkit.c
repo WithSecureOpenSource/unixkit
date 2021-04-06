@@ -6,17 +6,19 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <libgen.h>
+#include <poll.h>
 #include <signal.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include "unixkit.h"
 
-#ifdef __APPLE__
+#if defined(__APPLE__)
 #define FD_DIR "/dev/fd"
-#else
+#elif defined(__linux__)
 #define FD_DIR "/proc/self/fd"
 #endif
 
+#ifdef FD_DIR
 list_t *unixkit_get_open_fds()
 {
     int dirfd = open(FD_DIR, O_RDONLY);
@@ -36,6 +38,29 @@ list_t *unixkit_get_open_fds()
     closedir(dir);
     return open_fds;
 }
+#else
+list_t *unixkit_get_open_fds()
+{
+    list_t *open_fds = make_list();
+    int open_max = sysconf(_SC_OPEN_MAX);
+    int fd = 0;
+    while (fd < open_max) {
+        struct pollfd fds[1024];
+        int nfds = open_max - fd;
+        if (nfds > 1024)
+            nfds = 1024;
+        for (int i = 0; i < nfds; i++) {
+            fds[i].fd = fd++;
+            fds[i].events = POLLIN;
+        }
+        poll(fds, nfds, 0);
+        for (int i = 0; i < nfds; i++)
+            if (!(fds[i].revents & POLLNVAL))
+                list_append(open_fds, as_integer(fd));
+    }
+    return open_fds;
+}
+#endif
 
 static void close_open_fds(list_t *keep_fds)
 {
