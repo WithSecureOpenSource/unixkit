@@ -12,6 +12,10 @@ if env['ARCH'] == 'darwin':
     env.StaticLibrary('unixkit',
                       ['unixkit.c',
                        'unixkit-darwin.c'])
+elif env['ARCH'] in ['freebsd_amd64', 'openbsd_amd64']:
+    env.StaticLibrary('unixkit',
+                      ['unixkit.c',
+                       'unixkit-freebsd.c'])
 else:
     env.StaticLibrary('unixkit',
                       ['unixkit.c',

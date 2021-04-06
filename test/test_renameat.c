@@ -6,7 +6,7 @@
 
 static bool create_and_rename(int dirfd, const char *old, const char *new)
 {
-    int fd = openat(dirfd, old, O_CREAT | O_TRUNC, 0644);
+    int fd = openat(dirfd, old, O_CREAT | O_TRUNC | O_WRONLY, 0644);
     assert(fd >= 0);
     close(fd);
     return unixkit_renameat(dirfd, old, dirfd, new);
