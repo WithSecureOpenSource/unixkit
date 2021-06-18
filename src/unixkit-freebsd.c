@@ -1,11 +1,11 @@
-#include "unixkit-posix.h"
-
 #include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+#include "unixkit-posix.h"
 
 char *unixkit_get_fd_path(int fd)
 {
@@ -32,9 +32,7 @@ bool unixkit_rename(const char *old, const char *new)
     return false;
 }
 
-bool unixkit_renameat(int old_dirfd,
-                      const char *old,
-                      int new_dirfd,
+bool unixkit_renameat(int old_dirfd, const char *old, int new_dirfd,
                       const char *new)
 {
     struct stat sb;

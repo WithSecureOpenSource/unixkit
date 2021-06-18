@@ -1,6 +1,5 @@
-#include <fsdyn/charstr.h>
-#include <fsdyn/fsalloc.h>
-#include <fsdyn/integer.h>
+#include "unixkit.h"
+
 #include <assert.h>
 #include <dirent.h>
 #include <errno.h>
@@ -10,7 +9,10 @@
 #include <signal.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
-#include "unixkit.h"
+
+#include <fsdyn/charstr.h>
+#include <fsdyn/fsalloc.h>
+#include <fsdyn/integer.h>
 
 #if defined(__APPLE__)
 #define FD_DIR "/dev/fd"
@@ -118,10 +120,8 @@ static bool write_pidfile(const char *pidfile)
     return !error;
 }
 
-pid_t unixkit_daemon_create(list_t *keep_fds,
-                            const char *workdir,
-                            const char *pidfile,
-                            intptr_t *id)
+pid_t unixkit_daemon_create(list_t *keep_fds, const char *workdir,
+                            const char *pidfile, intptr_t *id)
 {
     assert(id != NULL);
     *id = -1;
@@ -176,8 +176,7 @@ struct unixkit_filewriter {
     char *tmp_path;
 };
 
-unixkit_filewriter_t *unixkit_filewriter_open(const char *path,
-                                              mode_t mode)
+unixkit_filewriter_t *unixkit_filewriter_open(const char *path, mode_t mode)
 {
     char *tmp_path = charstr_printf("%s.XXXXXX", path);
     int fd = mkstemp(tmp_path);
@@ -238,9 +237,8 @@ static size_t common_prefix_length(const char *a, const char *b)
 
 static bool path_starts_with_(const char *path, const char *prefix, size_t len)
 {
-    return !prefix[len]
-        && (!path[len] || path[len] == '/'
-            || (len > 0 && prefix[len - 1] == '/'));
+    return !prefix[len] &&
+        (!path[len] || path[len] == '/' || (len > 0 && prefix[len - 1] == '/'));
 }
 
 bool unixkit_path_starts_with(const char *path, const char *prefix)

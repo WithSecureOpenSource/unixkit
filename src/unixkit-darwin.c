@@ -1,7 +1,3 @@
-#include "unixkit-posix.h"
-
-#include <fsdyn/fsalloc.h>
-
 #include <errno.h>
 #include <fcntl.h>
 #include <stdbool.h>
@@ -11,6 +7,10 @@
 #include <sys/stat.h>
 #include <sys/ucred.h>
 #include <sys/un.h>
+
+#include <fsdyn/fsalloc.h>
+
+#include "unixkit-posix.h"
 
 char *unixkit_get_fd_path(int fd)
 {
@@ -27,12 +27,8 @@ bool unixkit_get_peer_credentials(int socket, uid_t *uid, gid_t *gid)
 {
     struct xucred peer_credentials;
     socklen_t option_len = sizeof peer_credentials;
-    if (getsockopt(socket,
-                   SOL_LOCAL,
-                   LOCAL_PEERCRED,
-                   &peer_credentials,
-                   &option_len)
-        == 0) {
+    if (getsockopt(socket, SOL_LOCAL, LOCAL_PEERCRED, &peer_credentials,
+                   &option_len) == 0) {
         *uid = peer_credentials.cr_uid;
         *gid = peer_credentials.cr_gid;
         return true;
@@ -58,9 +54,7 @@ bool unixkit_rename(const char *old, const char *new)
     return false;
 }
 
-bool unixkit_renameat(int old_dirfd,
-                      const char *old,
-                      int new_dirfd,
+bool unixkit_renameat(int old_dirfd, const char *old, int new_dirfd,
                       const char *new)
 {
     if (!renameatx_np(old_dirfd, old, new_dirfd, new, RENAME_EXCL))

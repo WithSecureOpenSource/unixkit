@@ -1,8 +1,10 @@
-#include "unixkit.h"
-#include <fsdyn/charstr.h>
 #include <assert.h>
 #include <errno.h>
 #include <sys/stat.h>
+
+#include <fsdyn/charstr.h>
+
+#include "unixkit.h"
 
 static bool create_and_rename(const char *old, const char *new)
 {

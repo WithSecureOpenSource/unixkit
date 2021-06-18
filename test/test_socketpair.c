@@ -1,6 +1,7 @@
-#include "unixkit.h"
 #include <assert.h>
 #include <fcntl.h>
+
+#include "unixkit.h"
 
 int main(int argc, char **argv)
 {

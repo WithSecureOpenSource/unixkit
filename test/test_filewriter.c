@@ -1,7 +1,8 @@
-#include "unixkit.h"
 #include <assert.h>
 #include <string.h>
 #include <sys/stat.h>
+
+#include "unixkit.h"
 
 int main(int argc, char **argv)
 {
