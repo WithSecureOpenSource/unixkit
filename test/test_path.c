@@ -1,20 +1,17 @@
-#include "unixkit.h"
 #include <assert.h>
 #include <string.h>
 
+#include "unixkit.h"
+
 int main()
 {
-    assert(unixkit_path_starts_with("/sys/kernel",
-                                    "/sys"));
+    assert(unixkit_path_starts_with("/sys/kernel", "/sys"));
 
-    assert(unixkit_path_starts_with("/sys/kernel",
-                                    "/sys/"));
+    assert(unixkit_path_starts_with("/sys/kernel", "/sys/"));
 
-    assert(!unixkit_path_starts_with("/sys/kernel",
-                                     "/syss"));
+    assert(!unixkit_path_starts_with("/sys/kernel", "/syss"));
 
-    assert(!unixkit_path_starts_with("/sys/kernel",
-                                     "/sys/kernel/"));
+    assert(!unixkit_path_starts_with("/sys/kernel", "/sys/kernel/"));
 
     avl_tree_t *paths =
         make_avl_tree((int (*)(const void *, const void *)) strcmp);

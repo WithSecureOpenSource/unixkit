@@ -1,14 +1,15 @@
 #ifndef UNIXKIT
 #define UNIXKIT
 
-#include <fsdyn/avltree.h>
-#include <fsdyn/fsalloc.h>
-#include <fsdyn/list.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+#include <fsdyn/avltree.h>
+#include <fsdyn/fsalloc.h>
+#include <fsdyn/list.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,10 +35,8 @@ pid_t unixkit_fork(list_t *keep_fds);
  * and errno is set. This function acquires ownership of the list of
  * file descriptors argument.
  */
-pid_t unixkit_daemon_create(list_t *keep_fds,
-                            const char *workdir,
-                            const char *pidfile,
-                            intptr_t *id);
+pid_t unixkit_daemon_create(list_t *keep_fds, const char *workdir,
+                            const char *pidfile, intptr_t *id);
 bool unixkit_daemon_notify(intptr_t id);
 
 /* The returned value must be deallocated with fsfree. */
@@ -60,9 +59,7 @@ int unixkit_unix_listen(const char *path, mode_t mode);
  * EEXIST.
  */
 bool unixkit_rename(const char *old_path, const char *new_path);
-bool unixkit_renameat(int old_dirfd,
-                      const char *old_path,
-                      int new_dirfd,
+bool unixkit_renameat(int old_dirfd, const char *old_path, int new_dirfd,
                       const char *new_path);
 
 /* pipe() and socketpair() wrappers that set the close-on-exec flag on
@@ -75,8 +72,7 @@ bool unixkit_socketpair(int domain, int type, int protocol, int pairfd[2]);
  * or fclose on the underlying stream the behaviour is undefined.
  */
 typedef struct unixkit_filewriter unixkit_filewriter_t;
-unixkit_filewriter_t *unixkit_filewriter_open(const char *path,
-                                              mode_t mode);
+unixkit_filewriter_t *unixkit_filewriter_open(const char *path, mode_t mode);
 FILE *unixkit_filewriter_get_stream(unixkit_filewriter_t *fw);
 bool unixkit_filewriter_close(unixkit_filewriter_t *fw);
 

@@ -1,9 +1,5 @@
 #define _GNU_SOURCE
 
-#include "unixkit-posix.h"
-
-#include <fsdyn/fsalloc.h>
-
 #include <errno.h>
 #include <limits.h>
 #include <linux/fs.h>
@@ -14,6 +10,10 @@
 #include <sys/syscall.h>
 #include <sys/un.h>
 #include <unistd.h>
+
+#include <fsdyn/fsalloc.h>
+
+#include "unixkit-posix.h"
 
 static bool resolve_path(const char *path, char *buf, size_t len)
 {
@@ -41,12 +41,8 @@ bool unixkit_get_peer_credentials(int socket, uid_t *uid, gid_t *gid)
 {
     struct ucred peer_credentials;
     socklen_t option_len = sizeof peer_credentials;
-    if (getsockopt(socket,
-                   SOL_SOCKET,
-                   SO_PEERCRED,
-                   &peer_credentials,
-                   &option_len)
-        == 0) {
+    if (getsockopt(socket, SOL_SOCKET, SO_PEERCRED, &peer_credentials,
+                   &option_len) == 0) {
         *uid = peer_credentials.uid;
         *gid = peer_credentials.gid;
         return true;
@@ -72,7 +68,7 @@ int unixkit_unix_listen(const char *path, mode_t mode)
         return -1;
     }
     mode_t old_umask = umask(0);
-    int ret = bind(fd, (struct sockaddr *)&address, sizeof address);
+    int ret = bind(fd, (struct sockaddr *) &address, sizeof address);
     umask(old_umask);
     if (ret != 0 || listen(fd, 128) != 0) {
         int error = errno;
@@ -113,13 +109,11 @@ bool unixkit_rename(const char *old, const char *new)
     return false;
 }
 
-bool unixkit_renameat(int old_dirfd,
-                      const char *old,
-                      int new_dirfd,
+bool unixkit_renameat(int old_dirfd, const char *old, int new_dirfd,
                       const char *new)
 {
-    if (!syscall(
-            SYS_renameat2, old_dirfd, old, new_dirfd, new, RENAME_NOREPLACE))
+    if (!syscall(SYS_renameat2, old_dirfd, old, new_dirfd, new,
+                 RENAME_NOREPLACE))
         return true;
     if (errno == ENOSYS || errno == EINVAL) {
         struct stat sb;

@@ -1,10 +1,12 @@
-#include "unixkit.h"
-#include <fsdyn/integer.h>
 #include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/wait.h>
+
+#include <fsdyn/integer.h>
+
+#include "unixkit.h"
 
 int main()
 {
