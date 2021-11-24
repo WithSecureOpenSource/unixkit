@@ -23,6 +23,8 @@ main () {
                 run-tests linux32;;
             "Linux x86_64")
                 run-tests linux64;;
+            "Linux aarch64")
+                run-tests linux64;;
             "OpenBSD amd64")
                 run-tests openbsd_amd64;;
             *)
