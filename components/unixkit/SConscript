@@ -5,10 +5,11 @@ import os
 include = env.Install('include/unixkit', ['#include/unixkit.h'])
 lib = env.Install('lib', ['../../src/libunixkit.a'])
 
-env.Alias(
-    'install',
-    env.Install(os.path.join(env['PREFIX'], 'include/unixkit'), include),
-)
-env.Alias('install', env.Install(os.path.join(env['PREFIX'], 'lib'), lib))
+if env["HOST_ARCH"] == env["ARCH"]:
+    env.Alias(
+        'install',
+        env.Install(os.path.join(env['PREFIX'], 'include/unixkit'), include),
+    )
+    env.Alias('install', env.Install(os.path.join(env['PREFIX'], 'lib'), lib))
 
-env['CONFIG_BUILDER'](env)
+env.FSEnvInstallCommonLibConfig()
