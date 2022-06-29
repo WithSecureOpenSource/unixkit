@@ -37,11 +37,13 @@ def construct():
             CPPDEFINES=TARGET_DEFINES[target_arch],
             LINKFLAGS=TARGET_FLAGS[target_arch],
             tools=['default', 'textfile', 'fscomp'])
+        fsenv.consider_environment_variables(arch_env)
         if target_arch == "darwin":
             arch_env.AppendENVPath("PATH", "/opt/local/bin")
-        build_dir = os.path.join('stage',
-                                 target_arch,
-                                 ARGUMENTS.get('builddir', 'build'))
+        build_dir = os.path.join(
+            fsenv.STAGE,
+            target_arch,
+            ARGUMENTS.get('builddir', 'build'))
         for directory in DIRECTORIES:
             env = arch_env.Clone()
             SConscript(dirs=directory,
