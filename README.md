@@ -1,7 +1,7 @@
 ## Overview
 
 unixkit is a C library for Linux-like operating systems that offers a
-number useful system call wrappers.
+number of useful system call wrappers.
 
 ## Building
 
